@@ -5,9 +5,12 @@ dat = np.genfromtxt("pec_heh.csv", delimiter=',')
 dat = dat[1:,:]
 with open("pec_heh.csv", 'r') as fp:
     names = fp.readline()
-print(names)
+
 names = names.split(",")
 names = names[2:]
+names[-1] = names[-1].replace("\n", "")
+print(names)
+
 for n in range(len(names)):
     names[n] = names[n].replace(" ", "_")
 
@@ -32,13 +35,14 @@ for k in range(1, len(dipole_names) +1):
 
 #print(dipole_dict) # use the names index to find the correct dipX
 
-
+print(len(dat[:,0]))
 
 for n, j in enumerate(dipole_dat):
     placement = [int(dipole_dat[n,1]), int(dipole_dat[n,2])] 
     ind = dipole_names.index(placement)
     dip_str = 'dip' + str(ind +1)
     dipole_dict[dip_str].append(dipole_dat[n,3])
+
 
 space_pec = "        "
 
@@ -81,20 +85,37 @@ END
 ( Potential curves are IC-MRCI/awc5z; state-averaged CASSCF orbitals; "OCC, 10,4,4,1; CLOSED,5,2,2,0; CORE, 3,1,1,0" ; no relativistic correction)
 ( Dipoles are expectation value ones obtained at the same level as the potential curves )
 """)
+
     for i in range(2, len(dat[0,:])):
+        lam = 0
+        sym = "+"
+        for char in names[i-2]:
+            if char == 's':
+                lam = 0
+            elif char == 'p':
+                lam = 1
+            elif char == 'd':
+                lam = 2
+        
+        for (op, code) in zip(names[i-2][0::2], names[i-2][1::2]):
+            if (op+code) == "pz":
+                sym = "-"
+            
+
+
         fp.write("""
 
 
 poten """ + str(i-1) +'''
 name "''' + names[i-2] + '''"
-lambda 0
-symmetry +
-mult   2
+lambda ''' + str(lam) + '''
+symmetry ''' + sym + '''
+mult   1
 type   grid
 values
 ''') # lambda should be zero or one but D's should be two
 # symmetry most + but.... pz orbital where lambda=1 and symmetry - (only one)
-        for n, j in enumerate(dat[:50,i]):
+        for n, j in enumerate(dat[ : 401,i]):
             
 
             fp.write(space_pec + str(format(dat[n,0], '.8f')) + space_pec + str(format(j, '.8f')) + "\n")
