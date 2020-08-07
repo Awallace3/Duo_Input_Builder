@@ -113,9 +113,8 @@ symmetry ''' + sym + '''
 mult   1
 type   grid
 values
-''') # lambda should be zero or one but D's should be two
-# symmetry most + but.... pz orbital where lambda=1 and symmetry - (only one)
-        for n, j in enumerate(dat[ : 401,i]):
+''') 
+        for n, j in enumerate(dat[ : ,i]): # up to certain distance as well
             
 
             fp.write(space_pec + str(format(dat[n,0], '.8f')) + space_pec + str(format(j, '.8f')) + "\n")
@@ -148,7 +147,3 @@ values
             cnt += 1
 
         fp.write("end") 
-
-
-
-# make the range up to 2 ang
